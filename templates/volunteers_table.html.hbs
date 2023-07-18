@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+    <!-- START HEAD -->
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{{ title }}</title>
+        <!-- Bulma Version 0.9.4-->
+        <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.4/css/bulma.min.css" />
+        <!-- Import Font Awesome icons -->
+        <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+        <style>
+.table.is-hoverable.is-striped tbody tr:not(.is-selected):hover {
+    background-color: hsl(0, 0%, 93%);
+}
+        </style>
+    </head>
+    <!-- END HEAD -->
+
+    <body>
+
+        <!-- VOLUNTEER TABLE -->
+        <div class="container">
+                <table class="table is-hoverable is-striped is-fullwidth is-mobile">
+                    <thead>
+                        <tr class="th is-selected is-size-3-mobile">
+                            {{#with volunteers_header}}
+                            <th class="is-vcentered has-text-centered">{{ card_id  }}</th>
+                            <th class="is-vcentered has-text-centered">{{ surname }}</th>
+                            <th class="is-vcentered has-text-centered">{{ name }}</th>
+                            <th class="is-vcentered has-text-centered">{{ fiscal_code }}</th>
+                            <th class="is-vcentered has-text-centered">{{ disabled }}</th>
+                            {{/with}}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each volunteers}}
+                        <tr class="has-text-centered is-size-3-mobile">
+                            <td class="is-vcentered">{{ volunteer.card_id  }}</td>
+                            <td class="is-vcentered" style="white-space: nowrap;">{{ volunteer.surname }}</td>
+                            <td class="is-vcentered" style="white-space: nowrap;">{{ volunteer.name }}</td>
+                            <td class="is-vcentered" style="white-space: nowrap;">{{ fiscal_code }}</td>
+                            <td class="is-vcentered">{{#if volunteer.disabled}}<i class="fa fa-check"></i>{{/if}}</td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+        </div>
+        <!-- END VOLUNTEER TABLE -->
+
+    </body>
+</html>

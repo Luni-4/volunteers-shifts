@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+    <!-- START HEAD -->
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{{ title }}</title>
+        <!-- Bulma Version 0.9.4-->
+        <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.4/css/bulma.min.css" />
+        <style>
+.table.is-hoverable.is-striped tbody tr:not(.is-selected):hover {
+    background-color: hsl(0, 0%, 93%);
+}
+        </style>
+    </head>
+    <!-- END HEAD -->
+
+    <body>
+
+        <!-- SHIFTS TABLE -->
+        <div class="container mt-3 mb-5">
+            {{#each volunteers_shifts}}
+            <h3 class="subtitle is-3 has-text-black px-1" style="white-space: nowrap;">{{ volunteer_message }}</h3>
+            {{#if volunteer_disabled }}
+            <h4 class="subtitle is-4 has-text-black px-1" style="white-space: nowrap;">{{ volunteer_disabled }}</h4>
+            {{ else }}
+            <table class="table is-hoverable is-striped is-fullwidth is-mobile">
+                <thead>
+                    <tr class="th is-selected">
+                        {{#with shifts_headers}}
+                        <th class="is-vcentered has-text-centered">{{ id }}</th>
+                        {{#with table_headers}}
+                        <th class="is-vcentered has-text-centered">{{ date }}</th>
+                        <th class="is-vcentered has-text-centered">{{ task }}</th>
+                        <th class="is-vcentered has-text-centered">{{ entrance_hour }}</th>
+                        <th class="is-vcentered has-text-centered">{{ exit_hour }}</th>
+                        <th class="is-vcentered has-text-centered">{{ delete_shift }}</th>
+                        {{/with}}
+                        {{/with}}
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each shifts}}
+                    <tr class="has-text-centered">
+                        <td class="is-vcentered">{{ data.id }}</td>
+                        <td class="is-vcentered">{{ data.shift.day}} {{ data.shift.date }}</td>
+                        <td class="is-vcentered">{{ data.shift.task }}</td>
+                        <td class="is-vcentered">{{ data.shift.entrance_hour }}</td>
+                        <td class="is-vcentered">{{ data.shift.exit_hour }}</td>
+                        <td class="is-vcentered">
+                            <form class="container" action="{{ route }}/{{ data.id }}" method="post">
+                                <div class="field">
+                                    <p class="control">
+                                    <input type="hidden" name="_method" value="delete">
+                                    <button class="delete is-medium has-background-danger" type="submit"></button>
+                                    </p>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+            {{/if}}
+            {{/each}}
+        </div>
+        <!-- END SHIFTS TABLE -->
+
+    </body>
+</html>

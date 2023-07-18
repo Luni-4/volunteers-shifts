@@ -1,0 +1,30 @@
+{{#with cookie }}
+    {{#if is_first }}
+
+    <div class="columns is-centered is-overlay">
+        <div class="column is-half">
+            <div class="container">
+                <div class="columns is-multiline is-centered">
+                    <div class="column is-10">
+                        <div class="p-4 has-background-light is-rounded">
+                            <h4 class="mb-2 is-size-5 has-text-weight-bold">{{ title}}</h4>
+                            <div class="block mb-4 has-text-grey-dark"><a href="{{ route }}" target="_blank">{{ link }}</a></div>
+                            <div class="field is-grouped">
+                                <form action="{{ hide_dialog_route }}" method="post">
+                                    <input type="hidden" name="_method" value="put">
+                                    <button class="button is-primary mr-2">{{ accept }}</button>
+                                </form>
+                                <form action="{{ hide_dialog_route }}" method="post">
+                                    <input type="hidden" name="_method" value="put">
+                                    <button class="button is-outlined is-danger mr-2">{{ decline }}</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{/if}}
+{{/with}}

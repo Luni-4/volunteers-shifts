@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+
+    <!-- START HEAD -->
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{{ title }}</title>
+        <!-- Bulma Version 0.9.4-->
+        <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.4/css/bulma.min.css" />
+        <!-- Change color when hovering on the table row -->
+        <style>
+.table.is-hoverable.is-striped tbody tr:not(.is-selected):hover {
+    background-color: hsl(0, 0%, 93%);
+}
+        </style>
+        <!-- Reload the page on the same scroll position -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function(event) { 
+                var scrollpos = localStorage.getItem('scrollpos');
+                if (scrollpos) window.scrollTo(0, scrollpos);
+            });
+
+            window.onbeforeunload = function(e) {
+                localStorage.setItem('scrollpos', window.scrollY);
+            };
+        </script>
+    </head>
+    <!-- END HEAD -->
+
+    <!-- MAIN CONTENT -->
+    <body>
+        <!-- VOLUNTEER NAME AND SURNAME -->
+        <div class="container mt-5">
+            <h1 class="title is-1 has-text-centered px-1">{{ heading_message }}</h1>
+
+            <!-- VOLUNTEER SHIFTS -->
+            {{#with booked_shifts}}
+            {{#if any_shift }}
+            <h3 class="subtitle is-3 has-text-black is-size-5-mobile px-1 mt-6" style="white-space: nowrap;">{{ greeting_message }}</h3>
+            <div class="table-container">
+                <table class="table is-hoverable is-striped is-fullwidth is-mobile">
+                    <thead>
+                        <tr class="th is-selected">
+                            {{#with table_headers}}
+                            <th class="is-vcentered has-text-centered">{{ date }}</th>
+                            <th class="is-vcentered has-text-centered">{{ task }}</th>
+                            <th class="is-vcentered has-text-centered">{{ entrance_hour }}</th>
+                            <th class="is-vcentered has-text-centered">{{ exit_hour }}</th>
+                            <th class="is-vcentered has-text-centered">{{ delete_shift }}</th>
+                            {{/with}}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each shifts}}
+                        <tr class="has-text-centered is-size-5-mobile">
+                            <td class="is-vcentered">{{ data.shift.day}} {{ data.shift.date }}</td>
+                            <td class="is-vcentered">{{ data.shift.task }}</td>
+                            <td class="is-vcentered">{{ data.shift.entrance_hour }}</td>
+                            <td class="is-vcentered">{{ data.shift.exit_hour }}</td>
+                            <td class="is-vcentered">
+                                <form class="container" action="{{ route }}/{{ data.id }}" method="post">
+                                    <div class="field">
+                                        <p class="control">
+                                        <input type="hidden" name="_method" value="delete">
+                                        <button class="delete is-medium is-size-6-mobile is-responsive has-background-danger" type="submit"></button>
+                                        </p>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        {{else}}
+            <h3 class="title is-3 has-text-centered px-1">{{ no_shift_message }}</h3>
+        {{/if}}
+        {{/with}}
+        <!-- END VOLUNTEER SHIFTS -->
+        </div>
+
+        <!-- CURRENT WEEK BUTTON FORMS -->
+        {{#each current_week.shifts}}
+            {{#if this.last_shift }}
+                <form id="{{ add_button_id }}" action="{{ add_route }}" method="post">
+                    <input type="hidden" name="_method" value="put">
+                </form>
+            {{/if}}
+            <form id="{{ remove_button_id }}" action="{{ remove_route }}" method="post">
+                <input type="hidden" name="_method" value="delete">
+            </form>
+        {{/each}}
+
+        <!-- NEXT WEEK BUTTON FORMS -->
+        {{#each next_week.shifts}}
+            {{#if this.last_shift }}
+                <form id="{{ add_button_id }}" action="{{ add_route }}" method="post">
+                    <input type="hidden" name="_method" value="put">
+                </form>
+            {{/if}}
+            <form id="{{ remove_button_id }}" action="{{ remove_route }}" method="post">
+                <input type="hidden" name="_method" value="delete">
+            </form>
+        {{/each}}
+
+        <!-- SHIFTS DATA -->
+        <form id="form-data" class="container mt-6" action="{{ route }}" method="post">
+
+            <!-- CURRENT WEEK DATA -->
+            <h5 class="subtitle is-5 has-text-black is-size-5-mobile px-1" style="white-space: nowrap;">{{ current_week.message }}</h5>
+            <!-- SHOW GENERAL ERRORS -->
+            {{#if current_week.error }}
+            <h5 class="subtitle is-5 has-text-danger is-size-5-mobile px-1" style="white-space: nowrap;">{{ current_week.error }}</h5>
+            {{/if}}
+
+            <div class="table-container mb-5">
+                <table class="table is-hoverable is-striped is-fullwidth is-mobile">
+                        <thead>
+                            <tr class="th is-selected">
+                                <th class="is-vcentered has-text-centered">{{ current_week.table_headers.select }}</th>
+                                <th class="is-vcentered has-text-centered">{{ current_week.table_headers.date }}</th>
+                                <th class="is-vcentered has-text-centered">{{ current_week.table_headers.task }}</th>
+                                <th class="is-vcentered has-text-centered">{{ current_week.table_headers.entrance_hour }}</th>
+                                <th class="is-vcentered has-text-centered">{{ current_week.table_headers.exit_hour }}</th>
+                                <th class="is-vcentered has-text-centered">{{ current_week.table_headers.shift }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each current_week.shifts}}
+                            <tr class="has-text-centered is-size-5-mobile">
+                                <td class="is-vcentered">
+                                    {{#if date }}
+                                    <div class="field">
+                                        <div class="control">
+                                            <input type="checkbox" id="{{ form_id.checkbox_id }}" name="{{ form_id.checkbox_id }}" value="{{ form_id.checkbox_value }}">
+                                        </div>
+                                    </div>
+                                    {{/if}}
+                                </td>
+                                <td class="is-vcentered">{{ date.day }} {{ date.date }}</td>
+                                <td class="is-vcentered">
+                                    <div class="field">
+                                        <div class="control">
+                                            <select class="is-size-6-mobile has-text-centered" name="{{ form_id.tasks }}" id="{{ form_id.tasks }}">
+                                                {{#each tasks}}
+                                                <option>{{this}}</option>
+                                                {{/each}}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="is-vcentered">
+                                    <div class="field">
+                                        <div class="control">
+                                            <select class="is-size-6-mobile has-text-centered" name="{{ form_id.entrance_hour }}" id="{{ form_id.entrance_hour }}">
+                                                {{#each entrance_hours}}
+                                                <option value="{{ this.value }}">{{ this.show }}</option>
+                                                {{/each}}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="is-vcentered">
+                                    <div class="field">
+                                        <div class="control">
+                                            <select class="is-size-6-mobile has-text-centered" name="{{ form_id.exit_hour }}" id="{{ form_id.exit_hour }}">
+                                                {{#each exit_hours}}
+                                                <option value="{{ this.value }}">{{ this.show }}</option>
+                                                {{/each}}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="is-vcentered">
+                                  {{#if this.last_shift }}
+                                      <button class="button is-rounded is-responsive is-size-6-mobile is-success" type="submit" name="add" form="{{ add_button_id }}"><div class="is-size-4-mobile">+</div></button>
+                                  {{else}}
+                                      <button class="button is-rounded is-responsive is-size-6-mobile is-danger" type="submit" name="remove" form="{{ remove_button_id }}"><div class="is-size-4-mobile">-</div></button>
+                                  {{/if}}
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+            </div>
+
+            <!-- NEXT WEEK DATA -->
+            <h5 class="subtitle is-5 has-text-black is-size-5-mobile px-1 mt-6" style="white-space: nowrap;">{{ next_week.message }}</h5>
+            <!-- SHOW GENERAL ERRORS -->
+            {{#if next_week.error }}
+            <h5 class="subtitle is-5 has-text-danger is-size-5-mobile px-1" style="white-space: nowrap;">{{ next_week.error }}</h5>
+            {{/if}}
+
+            <div class="table-container mb-5">
+                <table class="table is-hoverable is-striped is-fullwidth is-mobile">
+                    <thead>
+                        <tr class="th is-selected">
+                            <th class="is-vcentered has-text-centered">{{ next_week.table_headers.select }}</th>
+                            <th class="is-vcentered has-text-centered">{{ next_week.table_headers.date }}</th>
+                            <th class="is-vcentered has-text-centered">{{ next_week.table_headers.task }}</th>
+                            <th class="is-vcentered has-text-centered">{{ next_week.table_headers.entrance_hour }}</th>
+                            <th class="is-vcentered has-text-centered">{{ next_week.table_headers.exit_hour }}</th>
+                            <th class="is-vcentered has-text-centered">{{ next_week.table_headers.shift }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each next_week.shifts}}
+                        <tr class="has-text-centered is-size-5-mobile">
+                            <td class="is-vcentered">
+                                {{#if date }}
+                                <div class="field">
+                                    <div class="control">
+                                        <input type="checkbox" id="{{ form_id.checkbox_id }}" name="{{ form_id.checkbox_id }}" value="{{ form_id.checkbox_value }}">
+                                    </div>
+                                </div>
+                                {{/if}}
+                            </td>
+                            <td class="is-vcentered">{{ date.day }} {{ date.date }}</td>
+                            <td class="is-vcentered">
+                                <div class="field">
+                                    <div class="control">
+                                        <select class="is-size-6-mobile has-text-centered" name="{{ form_id.tasks }}" id="{{ form_id.tasks }}">
+                                            {{#each tasks}}
+                                            <option>{{this}}</option>
+                                            {{/each}}
+                                        </select>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="is-vcentered">
+                                <div class="field">
+                                    <div class="control">
+                                        <select class="is-size-6-mobile has-text-centered" name="{{ form_id.entrance_hour }}" id="{{ form_id.entrance_hour }}">
+                                            {{#each entrance_hours}}
+                                            <option value="{{ this.value }}">{{ this.show }}</option>
+                                            {{/each}}
+                                        </select>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="is-vcentered">
+                                <div class="field">
+                                    <div class="control">
+                                        <select class="is-size-6-mobile has-text-centered" name="{{ form_id.exit_hour }}" id="{{ form_id.exit_hour }}">
+                                            {{#each exit_hours}}
+                                            <option value="{{ this.value }}">{{ this.show }}</option>
+                                            {{/each}}
+                                        </select>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="is-vcentered">
+                              {{#if this.last_shift }}
+                                  <button class="button is-rounded is-responsive is-size-6-mobile is-success" type="submit" name="add" form="{{ add_button_id }}"><div class="is-size-4-mobile">+</div></button>
+                              {{else}}
+                                  <button class="button is-rounded is-responsive is-size-6-mobile is-danger" type="submit" name="remove" form="{{ remove_button_id }}"><div class="is-size-4-mobile">-</div></button>
+                              {{/if}}
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+            <!-- END SHIFT DATA -->
+
+            <!-- PASS CARD IDENTIFIER THROUGH POST REQUEST -->
+            <input type="hidden" id="card_id" name="card_id" value="{{ id }}" />
+
+            <!-- BUTTON -->
+            <div class="field is-centered has-text-centered mb-3">
+                <p class="control">
+                    <button class="button is-large is-responsive is-primary" type="submit"><div class="is-size-4-mobile">{{ button.send_text }}</div></button>
+                </p>
+            </div>
+
+        </form>
+        <!-- END SHIFT DATA -->
+
+<script>
+
+// ID of the form
+const formId = "form-data";
+//  Page url
+const url = location.href;
+// Unique identifier for form
+const formIdentifier = `${url} ${formId}`;
+
+// Select form
+let form = document.querySelector(`#${formId}`);
+// Get the form elements
+let formElements = form.elements;
+
+/**
+ * This function gets the values in the form
+ * and returns them as an object with the
+ * [formIdentifier] as the object key
+ * @returns {Object}
+ */
+const getFormData = () => {
+  let data = { [formIdentifier]: {} };
+
+  for (const element of formElements) {
+    if (element.name.length > 0) {
+      if (element.type == 'checkbox') {
+        data[formIdentifier][element.name] = element.checked.toString();
+      } else {
+        data[formIdentifier][element.name] = element.value;
+      }
+    }
+  }
+  return data;
+};
+
+document.addEventListener("click", function(e){
+  data = getFormData();
+  sessionStorage.setItem(formIdentifier, JSON.stringify(data[formIdentifier]));
+});
+
+/**
+ * This function populates the form
+ * with data from sessionStorage
+ *
+ */
+const populateForm = () => {
+  if (sessionStorage.key(formIdentifier)) {
+    {{#if clear_session_storage }}
+    // Remove all saved data from sessionStorage
+    sessionStorage.clear();
+    {{/if}}
+    // Get and parse the saved data from sessionStorage
+    const savedData = JSON.parse(sessionStorage.getItem(formIdentifier));
+    for (const element of formElements) {
+      if (element.name in savedData) {
+        if (element.type == 'checkbox') {
+           element.checked = savedData[element.name] == 'true';
+        } else {
+           element.value = savedData[element.name];
+        }
+      }
+    }
+  }
+};
+
+// Populate the form when the document is loaded
+document.onload = populateForm();
+</script>
+
+    </body>
+
+</html>

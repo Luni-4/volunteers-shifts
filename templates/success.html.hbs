@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+    <!-- START HEAD -->
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{{ title }}</title>
+        <!-- Bulma Version 0.9.4-->
+        <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.4/css/bulma.min.css" />
+    </head>
+    <!-- END HEAD -->
+
+    <body>
+
+        <!-- MAIN CONTENT -->
+        <section class="hero is-fullheight has-text-centered">
+            <div class="hero-body">
+                {{#with success }}
+                <div class="container">
+                    <h1 class="title is-1 is-size-2-mobile has-text-danger">{{ congrats_message }}</h1>
+                    <h2 class="title is-2 mt-5 is-size-3-mobile has-text-dark">{{ message }}</h2>
+                    <form class="container mt-3" action="{{ route }}" method="post">
+                        <div class="field is-centered">
+                            <p class="control">
+                                <input type="hidden" name="_method" value="get">
+                                <button class="button is-rounded is-responsive is-large is-success" type="submit"><div class="is-size-4-mobile">{{ visualizer_message }}</div></button>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+                {{/with}}
+            </div>
+
+        </section>
+        <!-- END MAIN CONTENT -->
+
+    </body>
+</html>

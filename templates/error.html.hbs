@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+    <!-- START HEAD -->
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{{ title }}</title>
+        <!-- Bulma Version 0.9.4-->
+        <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.4/css/bulma.min.css" />
+    </head>
+    <!-- END HEAD -->
+
+    <body>
+
+        <!-- ERROR MESSAGE -->
+        <div class="container has-text-centered">
+            <h1 class="title is-1 has-text-danger">{{ status }}</h1>
+            <h2 class="title is-3 mt-5 has-text-dark">
+                <font class="has-text-danger">{{ uri }}</font> <span>&#8594;</span> {{ error_message }}
+            </h2>
+            <!-- RETURN TO AUTHENTICATION -->
+            <form class="container" action="{{ route }}" method="post">
+                <div class="field">
+                    <p class="control">
+                    <input type="hidden" name="_method" value="get">
+                    <button class="button is-success" type="submit">{{ button_message }}</button>
+                    </p>
+                </div>
+            </form>
+        </div>
+        <!-- END ERROR MESSAGE -->
+
+    </body>
+</html>

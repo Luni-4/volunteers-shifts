@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+    <!-- START HEAD -->
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{{ title }}</title>
+        <!-- Bulma Version 0.9.4-->
+        <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.4/css/bulma.min.css" />
+    </head>
+    <!-- END HEAD -->
+
+    <body>
+
+        <!-- MAIN CONTENT -->
+        <section class="hero is-fullheight has-text-centered">
+            <div class="hero-body">
+                <div class="container">
+                    <form action="{{ volunteer_route }}" method="post">
+                        <div class="field px-2 is-centered mb-6">
+                            <p class="control">
+                                <input type="hidden" name="_method" value="get">
+                                <div class="columns is-centered">
+                                    <button class="button is-large is-responsive is-fullwidth column is-3 is-primary" type="submit"><div class="is-size-4-mobile">{{ volunteer_message }}</div></button>
+                                </div>
+                            </p>
+                        </div>
+                    </form>
+                    <form action="{{ shifts_route }}" method="post">
+                        <div class="field px-2 is-centered mt-6">
+                            <p class="control">
+                                <input type="hidden" name="_method" value="get">
+                                <div class="columns is-centered">
+                                    <button class="button is-large is-responsive is-fullwidth column is-3 is-link" type="submit"><div class="is-size-4-mobile">{{ shifts_message }}</div></button>
+                                </div>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+        <!-- END MAIN CONTENT -->
+
+    </body>
+</html>

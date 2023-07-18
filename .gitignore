@@ -1,0 +1,8 @@
+target/
+Cargo.lock
+Secrets.toml
+Shuttle.toml
+
+# Do not hide sql files
+!*.sql
+

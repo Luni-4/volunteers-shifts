@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+    <!-- START HEAD -->
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{{ title }}</title>
+        <!-- Bulma Version 0.9.4 -->
+        <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.4/css/bulma.min.css" />
+        <!-- Reload the page on the same scroll position -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function(event) {
+                var scrollpos = localStorage.getItem('scrollpos');
+                if (scrollpos) window.scrollTo(0, scrollpos);
+            });
+
+            window.onbeforeunload = function(e) {
+                localStorage.setItem('scrollpos', window.scrollY);
+            };
+        </script>
+   </head>
+    <!-- END HEAD -->
+
+    <body>
+        <!-- START MAIN CONTENT -->
+        <section class="hero is-fullheight">
+            <div class="hero-body">
+
+                <!-- ADMINISTRATION AUTHENTICATION -->
+                <form class="container" action="{{ route }}" method="post">
+
+                    <!-- ADMINISTRATION AUTHENTICATION DATA -->
+                    <div class="columns is-centered mb-5">
+                        <div class="column is-half">
+                            <h4 class="subtitle is-4 has-text-black" style="white-space: nowrap;">{{ administration.description }}</h4>
+                            <div class="box">
+                                <div class="field">
+                                    <label class="label is-size-5-mobile">{{ administration.password_text }}</label>
+                                    <div class="control">
+                                        <input class="input {{#if error_message }}is-danger{{else}}is-primary{{/if}}"
+                                        type="password" minlength="8" required
+                                        title="{{ administration.password_empty_message }}"
+                                        name="password" id="password"
+                                        oninvalid="this.setCustomValidity('{{ administration.password_empty_message }}')"
+                                        oninput="this.setCustomValidity('')">
+                                    </div>
+                                    {{#if error_message }}
+                                        <p class="help is-danger">{{ error_message }}</p>
+                                    {{/if}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BUTTON -->
+                    <div class="field is-centered has-text-centered">
+                        <p class="control">
+                            <button class="button is-large is-responsive is-primary" type="submit"><div class="is-size-4-mobile">{{ button.send_text }}</div></button>
+                        </p>
+                    </div>
+
+                </form>
+                <!-- END ADMINISTRATION AUTHENTICATION -->
+
+                {{> cookie }}
+
+            </div>
+        </section>
+        <!-- END MAIN CONTENT -->
+
+<script>
+// Get DOM reference
+var input = document.getElementById("password");
+
+// Add event listener
+input.addEventListener("input", function(e){
+
+        // Clear any old status
+        this.setCustomValidity("");
+
+        // Check for invalid state(s)
+        if(this.validity.tooShort){ // Change minlength message
+        this.setCustomValidity("{{ administration.password_short_message }}");
+        } else if(this.validity.valueMissing || this.validity.badInput){ // Change missing value message
+        this.setCustomValidity("{{ administration.password_empty_message }}");
+        }
+        });
+</script>
+
+    </body>
+</html>

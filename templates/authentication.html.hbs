@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+    <!-- START HEAD -->
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{{ title }}</title>
+        <!-- Bulma Version 0.9.4 -->
+        <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.4/css/bulma.min.css" />
+        <!-- Hide input type number arrows -->
+        <style>
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+</style>
+        <!-- Reload the page on the same scroll position -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function(event) { 
+                var scrollpos = localStorage.getItem('scrollpos');
+                if (scrollpos) window.scrollTo(0, scrollpos);
+            });
+
+            window.onbeforeunload = function(e) {
+                localStorage.setItem('scrollpos', window.scrollY);
+            };
+        </script>
+   </head>
+    <!-- END HEAD -->
+
+    <body>
+        <!-- START MAIN CONTENT -->
+        <section class="hero is-fullheight">
+            <div class="hero-body">
+
+                <!-- VOLUNTEER AUTHENTICATION -->
+                <form class="container" action="{{ route }}" method="post">
+
+                    <!-- VOLUNTEER AUTHENTICATION DATA -->
+                    <div class="columns is-centered mb-5">
+                        <div class="column is-half">
+                            <h4 class="subtitle is-4 has-text-black">{{ auth_info.description }}</h4>
+                            <div class="box">
+                                <div class="field">
+                                    <label class="label is-size-5-mobile">{{ auth_info.card_id_text }}</label>
+                                    <div class="control">
+                                        <input class="input {{#if error_messages.card_id}}is-danger{{else}}is-primary{{/if}}"
+                                        type="number" min="1" max="100" required
+                                        title="{{auth_info.card_id_empty_message}}"
+                                        name="card_id" id="card_id"
+                                        value="{{ auth_info.card_id_value }}"
+                                        placeholder="{{ auth_info.card_id_placeholder }}"
+                                        oninvalid="this.setCustomValidity('{{{ auth_info.card_id_error.missing }}}')">
+                                    </div>
+                                    {{#if error_messages.card_id }}
+                                        <p class="help is-danger">{{ error_messages.card_id }}</p>
+                                    {{/if}}
+                                </div>
+                                <div class="field">
+                                    <label class="label is-size-5-mobile">{{ auth_info.surname_text }}</label>
+                                    <div class="control">
+                                        <input class="input {{#if error_messages.surname}}is-danger{{else}}is-primary{{/if}}"
+                                        type="text" required
+                                        title="{{ auth_info.surname_empty_message }}"
+                                        name="surname" id="surname"
+                                        value="{{ auth_info.surname_value }}"
+                                        placeholder="{{ auth_info.surname_placeholder }}"
+                                        oninvalid="this.setCustomValidity('{{ auth_info.surname_empty_message }}')"
+                                        oninput="this.setCustomValidity('')">
+                                    </div>
+                                    {{#if error_messages.surname}}
+                                        <p class="help is-danger">{{ error_messages.surname }}</p>
+                                    {{/if}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BUTTON -->
+                    <div class="field is-centered has-text-centered">
+                        <p class="control">
+                            <button class="button is-large is-responsive is-primary" type="submit"><div class="is-size-4-mobile">{{ button.send_text }}</div></button>
+                        </p>
+                    </div>
+
+                </form>
+                <!-- END VOLUNTEER AUTHENTICATION -->
+
+                {{> cookie }}
+
+            </div>
+        </section>
+        <!-- END MAIN CONTENT -->
+
+<script>
+// Get DOM reference
+var input = document.getElementById("card_id");
+
+// Add event listener
+input.addEventListener("input", function(e){
+
+        // Clear any old status
+        this.setCustomValidity("");
+
+        // Check for invalid state(s)
+        if(this.validity.rangeOverflow){ // Change overflow message
+        this.setCustomValidity("{{ auth_info.card_id_error.overflow }}");
+        } else if(this.validity.rangeUnderflow){ // Change underflow message
+        this.setCustomValidity("{{ auth_info.card_id_error.underflow }}");
+        } else if(this.validity.valueMissing || this.validity.typeMismatch || this.validity.tooShort || this.validity.badInput){ // Change invalid message
+        this.setCustomValidity("{{{ auth_info.card_id_error.invalid }}}");
+        }
+        });
+</script>
+
+    </body>
+</html>

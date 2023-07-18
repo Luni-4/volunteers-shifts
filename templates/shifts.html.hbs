@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+    <!-- START HEAD -->
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{{ title }}</title>
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
+        <!-- Bulma Version 0.9.4-->
+        <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.4/css/bulma.min.css" />
+    </head>
+    <!-- END HEAD -->
+
+    <body>
+        <!-- MENU -->
+        {{#if is_administration }}
+        {{> menu_administration }}
+        {{else}}
+        {{> menu }}
+        {{/if}}
+
+        <!-- SHIFTS -->
+        <section class="hero is-fullheight">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title is-1 is-size-3-mobile has-text-black has-text-centered px-2">{{ heading_message }}</h1>
+                    {{#if no_shifts_message}}
+                    <h2 class="subtitle is-2 is-size-3-mobile has-text-black has-text-centered mt-5 px-2" style="white-space: nowrap;">{{ no_shifts_message }}</h2>
+                    {{else}}
+                    {{#each shifts}}
+                    <div class="columns is-centered mb-5">
+                        <div class="column is-half">
+                            <div class="card">
+                                <header class="card-header has-background-success is-shadowless">
+                                    <p class="card-header-title is-centered mt-5"></p>
+                                </header>
+                                <div class="card-content has-text-centered">
+                                   <h2 class="title is-2">{{ date }}</h2>
+                                   <h3 class="title is-3 mt-2">{{ task }}</h3>
+                                   <h4 class="subtitle is-4 mt-2">{{ hours }}</h4>
+                                </div>
+                                <footer class="card-footer">
+                                    <!-- BUTTON -->
+                                    <form class="container" action="{{ delete_route }}" method="post">
+                                        <div class="field is-centered has-text-centered">
+                                            <p class="control">
+                                                <input type="hidden" name="_method" value="delete">
+                                                <button class="button is-fullwidth is-large is-size-5-mobile is-responsive is-danger" type="submit">{{ ../delete_message }}</button>
+                                            </p>
+                                        </div>
+                                    </form>
+                                </footer>
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}}
+                    {{/if}}
+
+                    <!-- LINK TO INSERT NEW SHIFTS -->
+                    <div class="field is-centered has-text-centered">
+                        <p class="control">
+                            <a class="button is-large is-size-5-mobile is-responsive is-success" href="{{{ insert_shifts_link }}}">{{ insert_shifts_text }}</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>

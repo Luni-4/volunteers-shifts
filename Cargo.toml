@@ -1,0 +1,45 @@
+[package]
+name = "volunteers-shifts"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+
+# Web app crates
+rocket = { version = "0.5.0", features = ["json", "secrets"] }
+rocket_dyn_templates = { version = "0.1.0", features = ["handlebars"] }
+
+# Cloud crates
+shuttle-rocket = "0.38"
+shuttle-runtime = "0.38"
+shuttle-secrets = "0.38"
+shuttle-shared-db = { version = "0.38", features = ["postgres", "sqlx"] }
+
+# Csv files crate
+csv = "1.3.0"
+
+# HTTP client crate
+reqwest = { version = "0.11", features = ["json"] }
+
+# Crate to manage a PostgreS database
+sqlx = { version = "0.7", features = ["runtime-tokio-native-tls", "postgres", "chrono"] }
+
+# Crate to manage JSON files
+serde = "1.0"
+
+# Crate to handle errors
+anyhow = "1.0"
+
+# Time crates
+chrono = "0.4"
+
+# Timezone crate
+chrono-tz = { version = "0.8", features = [ "filter-by-regex" ] }
+
+# Web server crate
+tokio = "1.26"
+
+[lints.clippy]
+declare_interior_mutable_const = "allow"
+borrow_interior_mutable_const = "allow"

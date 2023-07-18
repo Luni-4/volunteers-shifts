@@ -1,0 +1,27 @@
+<style>
+nav.navbar {
+     height: 3.6rem;
+}
+
+.navbar-item img {
+  max-height: 2.5rem;
+}
+</style>
+
+{{#with menu_administration }}
+<!-- START NAV -->
+<nav class="navbar is-success" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="{{{ index_route }}}">
+            <img src="{{{ image_path }}}">
+        </a>
+        <a class="navbar-item" href="{{{ volunteers_route }}}">
+            {{ volunteers_text }}
+        </a>
+        <a class="navbar-item" href="{{{ visualize_shifts_route }}}">
+            {{ visualize_shifts_text }}
+        </a>
+    </div>
+</nav>
+<!-- END NAV -->
+{{/with}}

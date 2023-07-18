@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+    <!-- START HEAD -->
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{{ title }}</title>
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
+        <!-- Bulma Version 0.9.4-->
+        <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.4/css/bulma.min.css" />
+        <!-- Reload the page on the same scroll position -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function(event) {
+                var scrollpos = localStorage.getItem('scrollpos');
+                if (scrollpos) window.scrollTo(0, scrollpos);
+            });
+
+            window.onbeforeunload = function(e) {
+                localStorage.setItem('scrollpos', window.scrollY);
+            };
+        </script>
+    </head>
+    <!-- END HEAD -->
+
+    <body>
+        <!-- MENU -->
+        {{#if is_administration }}
+        {{> menu_administration }}
+        {{else}}
+        {{> menu }}
+        {{/if}}
+
+        <section class="hero is-fullheight">
+            <div class="hero-body">
+                <div class="container px-3">
+                    <!-- CHANGE VISUALIZER OPTIONS -->
+                    {{#with form_info}}
+                    <form id="form-data" action="{{ route }}" method="post">
+                        <input type="hidden" name="_method" value="put">
+                        <div class="columns is-centered is-multiline is-mobile mt-4">
+                            <div class="column is-half">
+                                <div class="field has-text-centered">
+                                    <label class="label is-size-6-mobile mb-3">{{ week_text }}</label>
+                                    <div class="control">
+                                       <div class="select is-success is-fullwidth is-size-7-mobile">
+                                           <select class="has-text-centered is-size-7-mobile" name="week" id="week" onchange="sendForm()">
+                                               {{#each weeks}}
+                                                   <option value="{{ week_value }}">{{ week_text }}</option>
+                                               {{/each}}
+                                           </select>
+                                       </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column is-half">
+                                <div class="field has-text-centered">
+                                    <label class="label is-size-6-mobile mb-3">{{ days_text }}</label>
+                                    <div class="control">
+                                       <div class="select is-success is-fullwidth is-size-7-mobile">
+                                           <select class="has-text-centered is-size-7-mobile" name="day" id="day" onchange="sendForm()">
+                                               {{#if first_week_days}}
+                                               {{#each first_week_days}}
+                                                   <option value="{{ day.day_value }}" {{ is_selected }}>{{ day.day_text }}</option>
+                                               {{/each}}
+                                               {{/if}}
+                                               {{#if second_week_days}}
+                                               {{#each second_week_days}}
+                                                   <option value="{{ day_value }}">{{ day_text }}</option>
+                                               {{/each}}
+                                               {{/if}}
+                                           </select>
+                                       </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div hidden><input id="send-form" type="submit" value="Send Form"></div>
+                    </form>
+                    {{/with}}
+
+                    <!-- VISUALIZER -->
+                    <div class="columns is-centered is-multiline is-mobile mt-4">
+                        {{#each visualize_info }}
+                        <div class="column is-half">
+                            <div class="card">
+                                <header class="card-header has-background-success is-shadowless">
+                                    <p class="card-header-title is-centered has-text-centered is-size-6-mobile">
+                                         {{ task_name }}<br>[{{ task_hours }}]
+                                    </p>
+                                </header>
+                                <div class="card-content has-text-centered">
+                                    {{#each volunteers_names }}
+                                        <p class="block is-size-5-mobile">{{ this }}</p>
+                                    {{/each}}
+                                </div>
+                            </div>
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+<script type="text/javascript">
+// Refresh the page to the event source at `uri` with exponential backoff reconnect.
+function refresh(uri) {
+  var retryTime = 1;
+
+  function connect(uri) {
+    // Constructs a new event source at the selected uri
+    const events = new EventSource(uri);
+
+    // Refresh page at each new shift
+    events.addEventListener("message", (_) => {
+      // Refresh the page
+      location.reload();
+    });
+
+    // Set connection retry time at 1ms
+    events.addEventListener("open", () => {
+      retryTime = 1;
+    });
+
+    // Close the event source in case of error and set a new retry
+    events.addEventListener("error", () => {
+      events.close();
+
+      let timeout = retryTime;
+      retryTime = Math.min(64, retryTime * 2);
+      setTimeout(() => connect(uri), (() => timeout * 1000)());
+    });
+  }
+
+  connect(uri);
+}
+
+// Refresh
+refresh("{{ form_info.route }}");
+</script>
+
+<script type="text/javascript">
+
+// ID of the form
+const formId = "form-data";
+//  Page url
+const url = location.href;
+// Unique identifier for form
+const formIdentifier = `${url} ${formId}`;
+
+// Select form
+let form = document.querySelector(`#${formId}`);
+// Get the form elements
+let formElements = form.elements;
+
+/**
+ * This function gets the values in the form
+ * and returns them as an object with the
+ * [formIdentifier] as the object key
+ * @returns {Object}
+ */
+const getFormData = () => {
+  let data = { [formIdentifier]: {} };
+
+  for (const element of formElements) {
+    if (element.name.length > 0) {
+        data[formIdentifier][element.name] = element.value;
+    }
+  }
+  return data;
+};
+
+document.addEventListener("click", function(e){
+  data = getFormData();
+  sessionStorage.setItem(formIdentifier, JSON.stringify(data[formIdentifier]));
+});
+
+function sendForm() {
+  document.getElementById("send-form").click();
+}
+
+/**
+ * This function populates the form and button choices
+ * with data from sessionStorage
+ *
+ */
+const populateForm = () => {
+  // Get form item
+  const formItem = sessionStorage.getItem(formIdentifier);
+
+  // Populate form if not null
+  if (formItem != null) {
+    // Get and parse the saved data from sessionStorage
+    const savedData = JSON.parse(formItem);
+    for (const element of formElements) {
+      if (element.name in savedData) {
+       element.value = savedData[element.name];
+      }
+    }
+  }
+};
+
+// Populate the form when the document is loaded
+document.onload = populateForm();
+</script>
+
+    </body>
+</html>

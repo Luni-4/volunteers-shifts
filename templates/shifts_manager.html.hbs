@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+
+    <!-- START HEAD -->
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{{ title }}</title>
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
+        <!-- Bulma Version 0.9.4-->
+        <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.4/css/bulma.min.css" />
+        <!-- Reload the page on the same scroll position -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function(event) {
+                window.scrollTo(0, document.body.scrollHeight);
+            });
+        </script>
+    </head>
+    <!-- END HEAD -->
+
+    <!-- MAIN CONTENT -->
+    <body>
+        <!-- MENU -->
+        {{#if is_administration }}
+        {{> menu_administration }}
+        {{else}}
+        {{> menu }}
+        {{/if}}
+
+        <!-- ADD/REMOVE SHIFT BUTTON FORMS -->
+        {{#each shifts }}
+        {{#if routes.is_last_shift }}
+        <form id="{{ routes.add_button_id }}" action="{{ routes.add_route }}" method="post">
+            <input type="hidden" name="_method" value="put">
+        </form>
+        {{/if}}
+        {{/each}}
+
+        <!-- SHIFTS DATA -->
+        <form id="form-data" class="container mt-6 px-3" action="{{{ route }}}" method="post">
+            <h2 class="subtitle is-2 is-size-3-mobile has-text-centered">{{ heading_message }}</h2>
+            <h3 class="subtitle is-3 is-size-4-mobile has-text-centered">{{ guide_message }}</h3>
+            <!-- SHIFTS -->
+            {{#each shifts}}
+            <div class="columns is-centered mt-5 mb-5">
+                <div class="column is-half">
+                    <div class="card">
+                        <header class="card-header has-background-success is-shadowless">
+                            <p class="card-header-title is-centered has-text-centered is-size-5-mobile">
+                                 {{ shift_title }}
+                            </p>
+                        </header>
+                        <div class="card-content">
+                            <div class="field has-text-centered">
+                                <label class="label is-size-5-mobile mb-4">{{ ../shift_labels.week_name }}</label>
+                                <div class="control">
+                                    <div id="{{ shift_id }}buttons" class="buttons has-addons is-centered">
+                                        <button type="button" class="button is-rounded is-success is-selected" onclick="selectFirstWeek('{{ shift_id }}')">{{ first_week_date.week_bounds }}</button>
+                                        <button type="button" class="button is-rounded" onclick="selectSecondWeek('{{ shift_id }}')">{{ second_week_date.week_bounds }}</button>
+                                    </div>
+                                    <input type="hidden" id="week[{{ shift_id }}]" name="week[{{ shift_id }}]">
+                                </div>
+                            </div>
+                            <div class="field is-centered has-text-centered">
+                                <label class="label is-size-5-mobile mb-4">{{ ../shift_labels.week_date_label }}</label>
+                                <div class="control">
+                                    <div id="{{ shift_id }}first" name="{{ shift_id }}first">
+                                        <div class="select is-success">
+                                            <select class="has-text-centered" id="dates[{{ shift_id }}first]" name="dates[{{ shift_id }}first]">
+                                                <option value="{{ fake_value }}">{{ explain_dates }}</option>
+                                                {{#each first_week_date.week_days }}
+                                                <option value="{{ day_value }}">{{ day_text }}</option>
+                                                {{/each}}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div id="{{ shift_id }}second" name="{{ shift_id }}second" hidden>
+                                        <div class="select is-success">
+                                            <select class="has-text-centered" id="dates[{{ shift_id }}second]" name="dates[{{ shift_id }}second]">
+                                                <option value="{{ fake_value }}">{{ explain_dates }}</option>
+                                                {{#each second_week_date.week_days }}
+                                                <option value="{{ day_value }}">{{ day_text }}</option>
+                                                {{/each}}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field is-centered has-text-centered">
+                                <label class="label is-size-5-mobile mb-4">{{ ../shift_labels.task_label }}</label>
+                                <div class="control">
+                                    <div class="select is-success">
+                                        <select class="has-text-centered" id="tasks[{{ shift_id }}]" name="tasks[{{ shift_id }}]">
+                                            <option value="{{ fake_value }}">{{ explain_tasks }}</option>
+                                            {{#each tasks}}
+                                            <option value="{{ task_value }}">{{ task_name }} [{{ task_hours }}]</option>
+                                            {{/each}}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+
+            <!-- PASS CARD IDENTIFIER THROUGH POST REQUEST -->
+            <input type="hidden" id="card_id" name="card_id" value="{{ id }}" />
+
+            <!-- SUBMIT BUTTON -->
+            <div class="field is-grouped is-grouped-centered has-text-centered mt-5 mb-5">
+                {{#each shifts}}
+                {{#if routes.is_last_shift }}
+                <p class="control">
+                    <button class="button is-large is-size-5-mobile is-responsive is-success" type="submit" form="{{ routes.add_button_id }}">
+                        <div class="is-size-5-mobile">{{ button.text }}</div>
+                    </button>
+                </p>
+                {{/if}}
+                {{/each}}
+                <p class="control">
+                    <button class="button is-large is-size-5-mobile is-responsive is-success" type="submit">
+                        <div class="is-size-5-mobile">{{ button.text }}</div>
+                    </button>
+                </p>
+            </div>
+
+        </form>
+        <!-- END SHIFT DATA -->
+
+<script>
+
+// ID of the form
+const formId = "form-data";
+//  Page url
+const url = location.href;
+// Unique identifier for form
+const formIdentifier = `${url} ${formId}`;
+
+// Identifier for the session storage item which saves buttons
+const weekId = "weekButtons";
+// Unique identifier for buttons
+const weekIdentifier = `${url} ${weekId}`;
+
+// Select form
+let form = document.querySelector(`#${formId}`);
+// Get the form elements
+let formElements = form.elements;
+
+function selectButton(elem1, elem2) {
+   elem1.classList.add("is-success");
+   elem1.classList.add("is-selected");
+   elem2.classList.remove("is-success");
+   elem2.classList.remove("is-selected");
+
+   // Unfocus clicked element
+   elem1.blur();
+}
+
+function retrieveButtons(shiftId) {
+   const buttons = document.getElementById(`${shiftId}buttons`);
+
+   return [buttons.firstElementChild, buttons.lastElementChild];
+}
+
+function toggleWeeks(shiftId, toggle) {
+   // Get first week dates
+   const first_week = document.getElementById(`${shiftId}first`);
+   // Get second week dates
+   const second_week = document.getElementById(`${shiftId}second`);
+
+   // Show and hide week dates
+   if (toggle == "first") {
+      first_week.removeAttribute("hidden");
+      second_week.setAttribute("hidden", "");
+   } else {
+      second_week.removeAttribute("hidden");
+      first_week.setAttribute("hidden", "");
+   }
+
+}
+
+function hiddenWeekValue(shiftId, value) {
+   document.getElementById(`week[${shiftId}]`).setAttribute("value", value);
+}
+
+function selectFirstWeek(shiftId) {
+   // Retrieve buttons
+   const [button1, button2] = retrieveButtons(shiftId);
+
+   // Select first week button changing the class property
+   selectButton(button1, button2);
+
+   // Set hidden value for the first week
+   hiddenWeekValue(shiftId, "true");
+
+   // Show first week days and hide second week days
+   toggleWeeks(shiftId, "first");
+}
+
+function selectSecondWeek(shiftId) {
+   // Retrieve buttons
+   const [button1, button2] = retrieveButtons(shiftId);
+
+   // Select second week button changing the class property
+   selectButton(button2, button1);
+
+   // Set hidden value for the second week
+   hiddenWeekValue(shiftId, "false");
+
+   // Show first week days and hide second week days
+   toggleWeeks(shiftId, "second");
+}
+
+/**
+ * This function gets the values in the form
+ * and returns them as an object with the
+ * [formIdentifier] as the object key
+ * @returns {Object}
+ */
+const getFormData = () => {
+  let data = { [formIdentifier]: {} };
+
+  for (const element of formElements) {
+    if (element.name.length > 0) {
+        data[formIdentifier][element.name] = element.value;
+    }
+  }
+  return data;
+};
+
+document.addEventListener("click", function(e){
+  data = getFormData();
+  sessionStorage.setItem(formIdentifier, JSON.stringify(data[formIdentifier]));
+});
+
+/**
+ * This function populates the form and button choices
+ * with data from sessionStorage
+ *
+ */
+const populateForm = () => {
+{{#if clear_session_storage }}
+  // Remove all saved data from sessionStorage
+  sessionStorage.removeItem(formIdentifier);
+  return;
+{{/if}}
+
+  // Get form item
+  const formItem = sessionStorage.getItem(formIdentifier);
+
+  // Populate form if not null
+  if (formItem != null) {
+    // Get and parse the saved data from sessionStorage
+    const savedData = JSON.parse(formItem);
+    for (const element of formElements) {
+      if (element.name in savedData) {
+       element.value = savedData[element.name];
+      }
+      // Check the week value
+      if (element.name.includes("week")) {
+          // Match the content inside square brackets
+          let matches = element.name.match(/\[(.*?)\]/);
+          // Do not check matches and directly extract the shift identifier
+          let shiftId = matches[1];
+          if (element.value == "" || element.value == "true") {
+               selectFirstWeek(shiftId);
+          } else {
+               selectSecondWeek(shiftId);
+          }
+      }
+    }
+  }
+};
+
+// Populate the form when the document is loaded
+document.onload = populateForm();
+</script>
+
+    </body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+    <!-- START HEAD -->
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{{ title }}</title>
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
+        <!-- Bulma Version 0.9.4-->
+        <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.4/css/bulma.min.css" />
+    </head>
+    <!-- END HEAD -->
+
+    <body>
+
+        <!-- MENU ADMINISTRATION -->
+        {{> menu_administration }}
+
+        <!-- VOLUNTEERS INFO -->
+        <div class="container mt-4 mb-3 px-3">
+            <div class="columns is-multiline is-mobile is-centered">
+                {{#each volunteers}}
+                <div class="column">
+                    <div class="card">
+                        <header class="card-header has-background-success is-shadowless">
+                            <p class="card-header-title is-centered has-text-centered is-size-5-mobile">
+                                {{ volunteer.card_id }}
+                            </p>
+                        </header>
+                        <div class="card-content has-text-centered">
+                            <p class="block" style="white-space: nowrap;"><strong>{{ volunteer.surname }} </strong>{{ volunteer.name }}</p>
+                            <p class="block" style="white-space: nowrap;"><a href="tel:{{ phone_number }}">{{ phone_number }}</a></p>
+                            {{#if volunteer.disabled}}
+                            <p class="block has-text-danger is-uppercase">{{ ../disabled_message }}</p>
+                            {{else}}
+                            <div class="buttons is-centered">
+                                <a class="button is-responsive is-size-5-mobile is-success" href="{{ ../shifts_manager_route }}?id={{ volunteer.card_id }}">{{ ../shifts_manager_message }}</a>
+                                <a class="button is-responsive is-size-5-mobile is-danger" href="{{ ../shifts_route }}?id={{ volunteer.card_id }}">{{ ../shifts_message }}</a>
+                            </div>
+                            {{/if}}
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            <!-- UPDATE BUTTON -->
+            <form class="field is-centered has-text-centered mt-3" action="{{ volunteer_route }}" method="post">
+                <p class="control">
+                    <input type="hidden" name="_method" value="put">
+                    <button class="button is-large is-size-5-mobile is-responsive is-success" type="submit">{{ update_volunteer_message }}</button>
+                </p>
+            </form>
+        </div>
+        <!-- END VOLUNTEERS INFO -->
+
+    </body>
+</html>

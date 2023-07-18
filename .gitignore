@@ -1,0 +1,13 @@
+Cargo.lock
+Secrets.toml
+Shuttle.toml
+
+# Directory
+target/
+/assets/**
+
+# Do not hide sql files
+!*.sql
+
+# Do not hide.gitkeep files
+!**/.gitkeep

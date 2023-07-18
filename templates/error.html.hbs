@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+    <!-- START HEAD -->
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{{ title }}</title>
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
+        <!-- Bulma Version 0.9.4-->
+        <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.4/css/bulma.min.css" />
+    </head>
+    <!-- END HEAD -->
+
+    <body>
+
+        <!-- ERROR MESSAGE -->
+        <section class="hero is-fullheight">
+            <div class="hero-body">
+                <div class="container has-text-centered">
+                    <h1 class="title is-1 has-text-danger">{{ status }}</h1>
+                    <h2 class="title is-3 mt-5 has-text-dark">
+                        <font class="has-text-danger">{{ uri }}</font> <span>&#8594;</span>{{ error_message }}
+                    </h2>
+                    <!-- RETURN TO AUTHENTICATION -->
+                    <a class="button is-responsive is-large is-size-4-mobile is-success mt-3" href="{{ route }}"><div class="is-size-4-mobile">{{ button_message }}</div></a>
+                </div>
+            </div>
+        </section>
+        <!-- END ERROR MESSAGE -->
+
+    </body>
+</html>

@@ -1,0 +1,12 @@
+## Default profile.
+[default]
+address = "127.0.0.1" ## localhost address
+template_dir = "templates"
+port = 8080
+
+## Smartphone profile.
+## Anyone should replace both IP and port parameter with their own values
+## in order to reach out the device where the app will be running on.
+[mobile]
+address = "0.0.0.0"
+port = 8080
